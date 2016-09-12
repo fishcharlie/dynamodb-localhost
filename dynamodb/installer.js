@@ -15,13 +15,7 @@ var download = function (downloadUrl, installPath, callback) {
                 callback(new Error('Error getting DynamoDb local latest tar.gz location: ' + response.statusCode));
             }
             http.get(response.headers.location, function (redirectResponse) {
-                    var len = parseInt(redirectResponse.headers['content-length'], 10),
-                        bar = new ProgressBar('Downloading dynamodb-local [:bar] :percent :etas', {
-                            complete: '=',
-                            incomplete: ' ',
-                            width: 40,
-                            total: len
-                        });
+                    var len = parseInt(redirectResponse.headers['content-length'], 10);
                     if (200 != redirectResponse.statusCode) {
                         throw new Error('Error getting DynamoDb local latest tar.gz location ' + response.headers.location + ': ' + redirectResponse.statusCode);
                     }
@@ -30,9 +24,6 @@ var download = function (downloadUrl, installPath, callback) {
                         .pipe(tar.Extract({
                             path: installPath
                         }))
-                        .on('data', function (chunk) {
-                            bar.tick(chunk.length);
-                        })
                         .on('end', function () {
                             callback("\n Installation complete!");
                         })
